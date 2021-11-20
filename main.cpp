@@ -31,7 +31,8 @@ void merge(vector<int>& v, int ind1, int ind2){
 
 void mergesort(vector<int>& v, int ind1, int ind2){
     vector<int> v1(v.begin() + ind1, v.end() - ind2 - 1), v2(v.begin() + ind2, v.end());
-    cout << "ok";
+    for(auto i : v1) cout << i << " ";
+    cout << endl;
     int i1 = 0, i2 = v1.size() / 2, i3 = v2.size() / 2;
     if(i1 != i2) mergesort(v1, 0, i2);
     if(i1 != i3) mergesort(v2, 0, i3);
