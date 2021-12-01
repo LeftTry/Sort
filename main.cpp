@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <random>
 #include "Heap.h"
+#include "ctime"
+#include <random>
+#include "iterator"
 
 using namespace std;
 
@@ -69,16 +72,105 @@ void pyramidSort(vector<int>& v){
 }
 
 void bubbleSort(vector<int>& v){
-    for(int i = 0;i < v.size();i++){
-
+    for(int i = 0;i < v.size() - 1;i++){
+        for(int j = 0;j < v.size() - i - 1;j++){
+            if(v[j] > v[j + 1]) swap(v[j], v[j + 1]);
+        }
     }
 }
 
+void bubbleSortExt(vector<int>& v){
+    for(int i = 0;i < v.size() - 1;i++){
+        int q = 0;
+        for(int j = 0;j < v.size() - i - 1;j++){
+            if(v[j] > v[j + 1]){
+                swap(v[j], v[j + 1]);
+                q++;
+            }
+        }
+        if(q == 0) break;
+    }
+}
+
+void putSort(vector<int>& v){
+    for(int i = 1;i < v.size();i++){
+        for(int j = i;j > 0 && v[j - 1] > v[j];j--){
+            swap(v[j], v[j - 1]);
+        }
+    }
+}
+
+void selectSort(vector<int>& v){
+    for(int i = 0;i < v.size() - 1;i++){
+        for(int j = i + 1;j < v.size();j++){
+            if(v[j] < v[i]) swap(v[i], v[j]);
+        }
+    }
+}
+
+void test (void (*sort_function)(vector<int>&), int n, vector<int>& v){
+    double ticksStart = clock();
+    sort_function(v);
+    double timeUsed = (clock() - ticksStart) / (double)CLOCKS_PER_SEC;
+    cout << "non_sorted: " << endl;
+    cout << timeUsed << endl;
+    ticksStart = clock();
+    sort_function(v);
+    timeUsed = (clock() - ticksStart) / (double)CLOCKS_PER_SEC;
+    cout << "sorted: " << endl;
+    cout << timeUsed << endl;
+    reverse(v.begin(), v.end());
+    ticksStart = clock();
+    sort_function(v);
+    timeUsed = (clock() - ticksStart) / (double)CLOCKS_PER_SEC;
+    cout << "sorted, reversed: " << endl;
+    cout << timeUsed << endl;
+    std::random_device rd;
+    std::mt19937 g(rd());
+    shuffle(v.begin(), v.end() - v.size() + v.size() / 10, g);
+    ticksStart = clock();
+    sort_function(v);
+    timeUsed = (clock() - ticksStart) / (double)CLOCKS_PER_SEC;
+    cout << "90% sorted" << endl;
+    cout << timeUsed << endl;
+}
+
 int main() {
-    vector<int> v(5);
-    for(int i = 0; i < 5;i++) cin >> v[i];
-    mergesort(v, 0, v.size() / 2);
-    for(auto i : v) cout << i << " ";
-    cout << endl;
+    int n = 1e3;
+    cout << "Size: " << n << endl;
+    vector<int> v(n);
+    for(int i = 0;i < v.size();i++) v[i] = rand();
+    cout << "BubbleSort:" << endl;
+    test(bubbleSort, n, v);
+    cout << "BubbleSortExt:" << endl;
+    test(bubbleSortExt, n, v);
+    cout << "selectSort:" << endl;
+    test(selectSort, n, v);
+    cout << "putSort:" << endl;
+    test(putSort, n, v);
+    n = 1e4;
+    cout << "Size: " << n << endl;
+    vector<int> v1(n);
+    for(int i = 0;i < v1.size();i++) v1[i] = rand();
+    cout << "BubbleSort:" << endl;
+    test(bubbleSort, n, v1);
+    cout << "BubbleSortExt:" << endl;
+    test(bubbleSortExt, n, v1);
+    cout << "selectSort:" << endl;
+    test(selectSort, n, v1);
+    cout << "putSort:" << endl;
+    test(putSort, n, v1);
+    n = 1e5;
+    cout << "Size: " << n << endl;
+    vector<int> v2(n);
+    for(int i = 0;i < v2.size();i++) v2[i] = rand();
+    cout << "BubbleSort:" << endl;
+    test(bubbleSort, n, v2);
+    cout << "BubbleSortExt:" << endl;
+    test(bubbleSortExt, n, v2);
+    cout << "selectSort:" << endl;
+    test(selectSort, n, v2);
+    cout << "putSort:" << endl;
+    test(putSort, n, v2);
     return 0;
 }
