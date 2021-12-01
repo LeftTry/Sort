@@ -1,42 +1,77 @@
 #include <iostream>
 #include "vector"
+#include <algorithm>
+#include <random>
+#include "Heap.h"
 
 using namespace std;
 
-void merge(vector<int>& v, int ind1, int ind2){
-    int j = 0;
-    vector<int> v1(v.begin() + ind1, v.end() - ind2 - 1), v2(v.begin() + ind2, v.end());
-    int size1 = ind2 - ind1, size2 = v.size() - ind2;
-    for(int i = 0;i < max(size1, size2);i++){
-        if(i >= size1){
-            v[j] = v2[i];
+vector<int> merge(vector<int>& v1, vector<int>& v2){
+    vector<int> v(v1.size() + v2.size());
+    int i = 0, j = 0, k = 0;
+    while(i < v1.size() && j < v2.size()) {
+        if (v1[i] <= v2[j]) {
+            v[k] = v1[i];
+            k++;
+            i++;
+        } else {
+            v[k] = v2[j];
+            k++;
             j++;
-        }
-        else if(i >= size2){
-            v[j] = v1[i];
-            j++;
-        }
-        else {
-            if (v1[i] >= v2[i]) {
-                v[j] = v2[i];
-                v[j + 1] = v1[i];
-            } else if (v1[i] < v2[i]) {
-                v[j] = v1[i];
-                v[j + 1] = v2[i];
-            }
-            j += 2;
         }
     }
+        for(i;i < v1.size();i++){
+            v[k] = v1[i];
+            k++;
+        }
+        for(j;j < v2.size();j++){
+            v[k] = v2[j];
+            k++;
+        }
+    return v;
 }
 
 void mergesort(vector<int>& v, int ind1, int ind2){
-    vector<int> v1(v.begin() + ind1, v.end() - ind2 - 1), v2(v.begin() + ind2, v.end());
-    for(auto i : v1) cout << i << " ";
-    cout << endl;
+    vector<int> v1(v.begin() + ind1, v.end() - v.size() + ind2), v2(v.begin() + ind2, v.end());
     int i1 = 0, i2 = v1.size() / 2, i3 = v2.size() / 2;
-    if(i1 != i2) mergesort(v1, 0, i2);
-    if(i1 != i3) mergesort(v2, 0, i3);
-    merge(v, ind1, ind2);
+    if(v1.size() % 2 == 1) i2++;
+    if(v2.size() % 2 == 1) i3++;
+    if(v1.size() > 1) mergesort(v1, 0, i2);
+    if(v2.size() > 1) mergesort(v2, 0, i3);
+    v = merge(v1, v2);
+}
+
+int partition(vector<int>& v, int l, int r){
+    int m = l;
+    while (true){
+        while(v[l] < v[m]) l++;
+        while(v[r] > v[m]) r--;
+        if(l >= r) return r;
+        swap(v[l++], v[r--]);
+    }
+}
+
+void quickSort(vector<int>& v, int l, int r){
+    if(l < r){
+        int m = partition(v, l, r);
+        quickSort(v, l, m);
+        quickSort(v, m + 1, r);
+    }
+}
+
+void pyramidSort(vector<int>& v){
+    Heap<int> heap;
+    heap.Build_Heap2(v);
+    v.clear();
+    while (!heap.empty()){
+        v.push_back(heap.extractMax());
+    }
+}
+
+void bubbleSort(vector<int>& v){
+    for(int i = 0;i < v.size();i++){
+
+    }
 }
 
 int main() {
